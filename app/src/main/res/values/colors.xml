@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="item_pokemon_text_name">#66FFFFFF</color>
+    <color name="item_pokemon_background">#FF8282</color>
+    <color name="low_transparent">#1AFFFFFF</color>
+    <color name="transparent_white">#4DFFFFFF</color>
+    <color name="menu_background">#B3FFC5C5</color>
+    <color name="transparent_really_white">#66FFFFFF</color>
+    <color name="transparent_background_white">#B3FFFFFF</color>
+    <color name="sv_background">#339FA09F</color>
+    <color name="cv_view_background">#D9FFFFFF</color>
+    <color name="selectedTypeBackground">#D9FF981A</color>
+
+
+
+    <color name="steel_type">#78A6B8</color>
+    <color name="water_type">#549AF0</color>
+    <color name="bug_type">#96A23D</color>
+    <color name="dragon_type">#7A86E0</color>
+    <color name="electric_type">#FFD650</color>
+    <color name="ghost_type">#6F4C6E</color>
+    <color name="fire_type">#E66363</color>
+    <color name="fairy_type">#F297F2</color>
+    <color name="ice_type">#81E6FF</color>
+    <color name="fighting_type">#FFBA74</color>
+    <color name="normal_type">#9FA09F</color>
+    <color name="grass_type">#669E59</color>
+    <color name="psychic_type">#E98FAC</color>
+    <color name="rock_type">#B3AE8B</color>
+    <color name="dark_type">#504645</color>
+    <color name="ground_type">#946A4B</color>
+    <color name="poison_type">#A681C3</color>
+    <color name="flying_type">#A9CCEF</color>
+    <color name="default_type">#FFFFFF</color>
+
+
+
+</resources>
