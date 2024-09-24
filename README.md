@@ -39,6 +39,7 @@ Este proyecto utiliza la [PokéAPI](https://pokeapi.co/) para obtener datos de l
 3. **Reproducir sonidos**: Haz clic en la imagen de un Pokémon para escuchar su sonido.
 4. **Activar versiones Shiny**: Desliza hacia un lateral sobre la imagen del Pokemon para ver la versión shiny.
 5. **Ordenar segun tipos**: Pulsa en el botón de ordenar para realizar busquedas avanzadas de Pokemon de 1 o 2 tipos.
+6. **Busca Pokemons**: Puedes hacer busquedas de Pokemons por su número de Id o nombre en la barra superior.
 
 ## Capturas de pantalla
 
