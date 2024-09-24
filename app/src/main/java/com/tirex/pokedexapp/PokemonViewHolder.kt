@@ -1,5 +1,9 @@
 package com.tirex.pokedexapp
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -28,7 +32,10 @@ class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val pokemonName = pokemonItemResponse.name.replace(" ", "")
             .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
         binding.tvPokemonName.text = pokemonName
-        binding.root.setOnClickListener { onItemSelected(pokemonItemResponse.name ?: "Nombre no disponible") }
+        binding.root.setOnClickListener {
+            onItemSelected(pokemonItemResponse.name)
+            imageAnimation(binding.root)
+        }
 
         val url = pokemonItemResponse.url
         if (!url.isNullOrEmpty()) {
@@ -48,6 +55,36 @@ class PokemonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
+    private fun imageAnimation(view: View) {
+        val scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1.05f).apply {
+            duration = 500
+        }
+
+        val scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1.05f).apply {
+            duration = 500
+        }
+
+        val scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1f).apply {
+            duration = 500
+        }
+        val scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1f).apply {
+            duration = 500
+        }
+
+        val upAnimatorSet = AnimatorSet()
+        upAnimatorSet.play(scaleUpX).with(scaleUpY)
+
+        val downAnimatorSet = AnimatorSet()
+        downAnimatorSet.play(scaleDownX).with(scaleDownY)
+
+        upAnimatorSet.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                downAnimatorSet.start()
+            }
+        })
+
+        upAnimatorSet.start()
+    }
 
     private suspend fun fetchSpriteUrl(url: String): Triple<Int?, String?, Pair<TypeName?, TypeName?>?> {
         return withContext(Dispatchers.IO) {

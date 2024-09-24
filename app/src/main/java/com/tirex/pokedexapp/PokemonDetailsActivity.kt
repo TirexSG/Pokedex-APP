@@ -1,32 +1,37 @@
 package com.tirex.pokedexapp
 
-import android.content.Context
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.app.Dialog
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.media.AudioAttributes
-import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.WindowInsetsControllerCompat
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.view.animation.LinearInterpolator
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
+import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import com.tirex.pokedexapp.databinding.ActivityPokemonDetailsBinding
@@ -37,20 +42,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import uk.co.samuelwall.materialtaptargetprompt.extras.focals.RectanglePromptFocal
 import java.io.IOException
-import java.util.Locale
+import kotlin.math.roundToInt
 
 class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
 
     companion object {
         const val EXTRA_ID = "extra_id"
         const val MIN_DISTANCE = 100
+
     }
 
     private lateinit var binding: ActivityPokemonDetailsBinding
@@ -61,7 +67,6 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     private var pokemonImageShiny: String? = null
     private var downX = 0f
     private var downY = 0f
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,12 +92,7 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.let { controller ->
-                controller.hide(WindowInsets.Type.statusBars())
-                controller.hide(WindowInsets.Type.navigationBars())
-                controller.systemBarsBehavior =
-                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
         } else {
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -101,22 +101,20 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         }
 
+        val progressBar = binding.progressBarDetails
+        progressBar.indeterminateTintList = ContextCompat.getColorStateList(this, R.color.black)
+
 
         gestureDetector = GestureDetector(this, this)
 
-
-        val sharedPreferences = getSharedPreferences("PokedexPrefs", MODE_PRIVATE)
-        val showTutorial = intent.getBooleanExtra("SHOW_TUTORIAL", false)
-
-        if (showTutorial) {
-            showTutorialPrompts()
-
-            // Actualiza el estado de isFirstPokemon en SharedPreferences
-            val editor = sharedPreferences.edit()
-            editor.putBoolean("isFirstPokemon", false)
-            editor.apply()
-        }
         setupTouchListeners()
+
+        startEvolutionAnimation(binding.ivPokemonEvolution1)
+        startEvolutionAnimation(binding.ivPokemonEvolution2)
+        startEvolutionAnimation(binding.ivPokemonEvolution3)
+        startImageAnimation(binding.ivPokemonDetail)
+
+
     }
 
 
@@ -165,14 +163,82 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         return false
     }
 
+    private fun startImageAnimation(imageView: ImageView) {
+        // Animaciones de escalado para X e Y
+        val scaleDown = ObjectAnimator.ofFloat(imageView, "scaleX", 0.99f).also {
+            it.duration = 1500
+            it.repeatCount = ObjectAnimator.INFINITE
+            it.repeatMode = ObjectAnimator.REVERSE
+        }
+
+        val scaleDownY = ObjectAnimator.ofFloat(imageView, "scaleY", 0.99f).also {
+            it.duration = 1500
+            it.repeatCount = ObjectAnimator.INFINITE
+            it.repeatMode = ObjectAnimator.REVERSE
+        }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.play(scaleDown).with(scaleDownY)
+        animatorSet.start()
+    }
+
+    private fun startEvolutionAnimation(imageView: ImageView) {
+        // Animaciones de escalado para X e Y
+        val scaleDown = ObjectAnimator.ofFloat(imageView, "scaleX", 0.90f).also {
+            it.duration = 1500
+            it.repeatCount = ObjectAnimator.INFINITE
+            it.repeatMode = ObjectAnimator.REVERSE
+        }
+
+        val scaleDownY = ObjectAnimator.ofFloat(imageView, "scaleY", 0.90f).also {
+            it.duration = 1500
+            it.repeatCount = ObjectAnimator.INFINITE
+            it.repeatMode = ObjectAnimator.REVERSE
+        }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.play(scaleDown).with(scaleDownY)
+        animatorSet.start()
+    }
+
+    private fun imageAnimation(view: View) {
+        val scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1.1f).apply {
+            duration = 500
+        }
+
+        val scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1.1f).apply {
+            duration = 500
+        }
+
+        val scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1f).apply {
+            duration = 500
+        }
+        val scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1f).apply {
+            duration = 500
+        }
+
+        val upAnimatorSet = AnimatorSet()
+        upAnimatorSet.play(scaleUpX).with(scaleUpY)
+
+        val downAnimatorSet = AnimatorSet()
+        downAnimatorSet.play(scaleDownX).with(scaleDownY)
+
+        upAnimatorSet.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                downAnimatorSet.start()
+            }
+        })
+
+        upAnimatorSet.start()
+    }
+
+
+
     private fun setupTouchListeners() {
         binding.cvPokemonDetail.setOnTouchListener { v, event ->
             handleSwipeGesture(event, ::onCardSwipeRight, ::onCardSwipeLeft)
         }
 
-        binding.main.setOnTouchListener { v, event ->
-            handleSwipeGesture(event, ::onMainSwipeRight, null)
-        }
     }
 
     private fun handleSwipeGesture(
@@ -212,12 +278,11 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
     private fun showTutorialPrompts() {
 
-
         // Mostrar el primer MaterialTapTargetPrompt
         MaterialTapTargetPrompt.Builder(this)
             .setTarget(binding.cvPokemonDetail)
             .setPrimaryText("Sonido del Pokémon")
-            .setSecondaryText("Pulsa para escuchar el sonido de este Pokémon")
+            .setSecondaryText("Pulsa sobre la imagen del Pokemon para volver a escuchar el sonido")
             .setBackgroundColour(getResources().getColor(R.color.white))
             .setPrimaryTextColour(getResources().getColor(R.color.black))
             .setSecondaryTextColour(getResources().getColor(R.color.black))
@@ -229,10 +294,9 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             .setPromptFocal(RectanglePromptFocal())
             .setPromptStateChangeListener { prompt, state ->
                 if (state == MaterialTapTargetPrompt.STATE_DISMISSED || state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                    // Programar el segundo MaterialTapTargetPrompt para que aparezca después de un retraso
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        showSecondPrompt()
-                    }, 1000) // Retraso de 1 segundo antes de mostrar el segundo prompt
+
+                    showSecondPrompt()
+
                 }
             }
             .show()
@@ -244,7 +308,7 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         MaterialTapTargetPrompt.Builder(this)
             .setTarget(binding.cvPokemonDetail)
             .setPrimaryText("Imagen del Pokémon")
-            .setSecondaryText("Desliza hacia un lateral para ver su versión shiny")
+            .setSecondaryText("Desliza sobre la imagen del Pokemon para ver su versión shiny")
             .setBackgroundColour(getResources().getColor(R.color.white))
             .setPrimaryTextColour(getResources().getColor(R.color.black))
             .setSecondaryTextColour(getResources().getColor(R.color.black))
@@ -260,9 +324,206 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                     val editor = sharedPreferences.edit()
                     editor.putBoolean("isFirstPokemon", false)
                     editor.apply()
+
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        showSecondAdviceDialog()
+                    }, 2000)
+
                 }
             }
             .show()
+    }
+
+
+    private suspend fun getEvolutions(pokemonId: Int): EvolutionChain? {
+        val apiService = getRetrofit().create(APIService::class.java)
+
+        return withContext(Dispatchers.IO) {
+            try {
+                // Obtener la información del Pokémon
+                val pokemonSpeciesResponse = apiService.getPokemonSpecies(pokemonId)
+                Log.d("getEvolutions", "$pokemonSpeciesResponse")
+                if (!pokemonSpeciesResponse.isSuccessful) {
+                    Log.e(
+                        "getEvolutions",
+                        "Error en la solicitud de Pokémon Species: ${pokemonSpeciesResponse.message()}"
+                    )
+                    return@withContext null
+                }
+
+                // Obtener la URL de la cadena de evolución
+                val evolutionChainUrl = pokemonSpeciesResponse.body()?.evolution_chain?.url
+                Log.d("getEvolutions", "evolutionChainUrl: $evolutionChainUrl")
+
+                if (evolutionChainUrl.isNullOrEmpty()) {
+                    Log.e("getEvolutions", "URL de la cadena de evolución es nula o vacía")
+                    return@withContext null
+                }
+
+                // Extraer el ID de la cadena de evolución de la URL
+                val evolutionChainId =
+                    evolutionChainUrl.split("/").filter { it.isNotEmpty() }.lastOrNull()
+                        ?.toIntOrNull()
+                if (evolutionChainId == null) {
+                    Log.e(
+                        "getEvolutions",
+                        "ID de la cadena de evolución no válido: $evolutionChainUrl"
+                    )
+                    return@withContext null
+                }
+                Log.d("getEvolutions", "evolutionChainId: $evolutionChainId")
+
+                // Obtener la información de la cadena de evolución
+                val evolutionChainResponse = apiService.getEvolutionChain(evolutionChainId)
+                Log.d("getEvolutions", "evolutionChainResponse: $evolutionChainResponse")
+                if (!evolutionChainResponse.isSuccessful) {
+                    Log.e(
+                        "getEvolutions",
+                        "Error en la solicitud de Evolution Chain: ${evolutionChainResponse.message()}"
+                    )
+                    return@withContext null
+                }
+
+                evolutionChainResponse.body()?.chain
+            } catch (e: HttpException) {
+                Log.e("getEvolutions", "Error en la solicitud HTTP: ${e.message()}")
+                null
+            } catch (e: IOException) {
+                Log.e("getEvolutions", "Error en la conexión: ${e.message}")
+                null
+            } catch (e: Exception) {
+                Log.e("getEvolutions", "Error al obtener la evolución: ${e.message}")
+                null
+            }
+        }
+    }
+
+
+    private fun extractPokemonImageUrlsAndIds(chain: EvolutionChain): Pair<List<String>, List<Int>> {
+        val imageUrls = mutableListOf<String>()
+        val pokemonIds = mutableListOf<Int>()
+
+        fun traverseChain(chain: EvolutionChain) {
+            val speciesUrl = chain.species.url
+            if (speciesUrl.isNotBlank()) {
+                val speciesId =
+                    speciesUrl.split("/").filter { it.isNotEmpty() }.lastOrNull()?.toIntOrNull()
+                if (speciesId != null) {
+                    // Construye la URL para obtener la imagen del Pokémon
+                    val imageUrl =
+                        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/$speciesId.png"
+                    imageUrls.add(imageUrl)
+                    pokemonIds.add(speciesId) // Añadir el ID del Pokémon como entero
+                } else {
+                    Log.e("extractPokemonImageUrlsAndIds", "ID de especie no válido: $speciesUrl")
+                }
+            } else {
+                Log.e("extractPokemonImageUrlsAndIds", "URL de especie nula")
+            }
+
+            // Recorre las evoluciones siguientes
+            for (evolveTo in chain.evolves_to) {
+                traverseChain(evolveTo)
+            }
+        }
+
+        traverseChain(chain)
+        return Pair(imageUrls, pokemonIds) // Retorna las URLs de imágenes y los IDs de los Pokémon
+    }
+
+
+    private fun loadEvolutionImages(imageUrls: List<String>, pokemonIds: List<Int>) {
+        Log.d(
+            "loadEvolutionImages",
+            "Cargando imágenes de evolución: $imageUrls, Pokemon IDs: $pokemonIds"
+        )
+
+        // Ocultar el CardView padre por defecto
+        binding.cvPokemonEvolutions.isVisible = false
+
+        fun loadEvolutionCard(
+            index: Int,
+            imageUrl: String,
+            pokemonId: Int,
+            cardView: View,
+            imageView: ImageView
+        ) {
+            Log.d("loadEvolutionCard", "Cargando imagen: $imageUrl para Pokémon ID: $pokemonId")
+            if (imageUrl.isNotEmpty()) {
+                cardView.isVisible = true
+                Picasso.get()
+                    .load(imageUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .into(imageView)
+
+                cardView.setOnClickListener {
+                    Log.d("loadEvolutionCard", "Clic en el CardView para ID: $pokemonId")
+                    navigateToDetail(pokemonId.toString())
+                }
+            } else {
+                Log.d("loadEvolutionCard", "Imagen vacía para ID: $pokemonId")
+            }
+        }
+
+        // Cargar las imágenes de evolución
+        val validEvolutions = imageUrls.indices.filter { index ->
+            index < pokemonIds.size && imageUrls[index].isNotEmpty()
+        }
+
+        // Limpiar la visibilidad de todos los CardView antes de cargar
+        binding.cvPokemonEvolution1.isVisible = false
+        binding.cvPokemonEvolution2.isVisible = false
+        binding.cvPokemonEvolution3.isVisible = false
+
+        // Cargar solo las evoluciones válidas si hay más de una
+        if (validEvolutions.size > 1) {
+            validEvolutions.forEach { index ->
+                loadEvolutionCard(
+                    index, imageUrls[index], pokemonIds[index], when (index) {
+                        0 -> binding.cvPokemonEvolution1
+                        1 -> binding.cvPokemonEvolution2
+                        2 -> binding.cvPokemonEvolution3
+                        else -> throw IndexOutOfBoundsException("Index out of bounds for evolutions")
+                    }, when (index) {
+                        0 -> binding.ivPokemonEvolution1
+                        1 -> binding.ivPokemonEvolution2
+                        2 -> binding.ivPokemonEvolution3
+                        else -> throw IndexOutOfBoundsException("Index out of bounds for evolutions")
+                    }
+                )
+            }
+
+            // Determinar si se debe mostrar el CardView padre
+            binding.cvPokemonEvolutions.isVisible = true
+        }
+    }
+
+
+    private fun showSecondAdviceDialog() {
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.advice_seconddialog, null)
+
+
+        val builder = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+
+        val dialog = builder.create()
+
+        dialogView.setOnClickListener{
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        val window = dialog.window
+        val layoutParams = window?.attributes
+        layoutParams?.gravity = Gravity.BOTTOM
+        layoutParams?.x = 0
+        layoutParams?.y = 150
+
+        window?.attributes = layoutParams
     }
 
 
@@ -273,14 +534,6 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
     }
 
-
-    private fun onMainSwipeRight() {
-        Log.d("Swipe", "Deslizado en Main hacia la derecha")
-
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 
     private fun onCardSwipeRight() {
         Log.d("Swipe", "Deslizado hacia la derecha")
@@ -307,6 +560,7 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                             // Mostrar la animación después de que la imagen se ha cargado
                             binding.shinyAnimation.visibility = View.VISIBLE
                             binding.shinyAnimation.playAnimation()
+                            imageAnimation(binding.ivPokemonDetail)
                             playShinySound()
                             isShiny = true
                         }
@@ -346,6 +600,7 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                             // Mostrar la animación después de que la imagen se ha cargado
                             binding.shinyAnimation.visibility = View.VISIBLE
                             binding.shinyAnimation.playAnimation()
+                            imageAnimation(binding.ivPokemonDetail)
                             playShinySound()
                             isShiny = true
                         }
@@ -382,15 +637,32 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
 
     private suspend fun createUI(pokemonDetail: PokemonUrl) {
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val evolutionChain = getEvolutions(pokemonDetail.id)
+            if (evolutionChain != null) {
+                val (imageUrls, pokemonIds) = extractPokemonImageUrlsAndIds(evolutionChain)
+                loadEvolutionImages(imageUrls, pokemonIds)
+                Log.d("getEvolutions", "Image URLs: $imageUrls")
+            } else {
+                Log.e("createUI", "No se pudo obtener la cadena de evolución")
+            }
+        }
+
         binding.apply {
             ivPokemonDetail.isVisible = false
             progressBarDetails.isVisible = true
+            viewMain.isVisible = true
             pokemonInfo.isVisible = false
             cvPokemonDescription.isVisible = false
             cvPokemonDetail.isVisible = false
             cvPokemonNameDetail.isVisible = false
             llHeightWeight.isVisible = false
             cvPokemonFirstType.isVisible = false
+            cvPokemonStats.isVisible = false
+            svPokemonStats.isVisible = false
+            cvPokemonStatsInterior.isVisible = false
+
 
             val pokemonName = pokemonDetail.name
             pokemonImage = pokemonDetail.sprites.others?.image?.frontImage
@@ -401,7 +673,7 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             val pokemonFixedHeight = String.format("%.1f", pokemonHeight * 0.1) + " m"
             val pokemonFixedWeight = String.format("%.1f", pokemonWeight * 0.1) + " kg"
             val pokemonSound = pokemonDetail.cries["latest"]
-
+            val pokemonStats = pokemonDetail.stats
             val pokemonDescription = fetchSpriteUrl(pokemonDetail.species.url)
             val pokemonType = pokemonDetail.types[0].type?.typeName
             val pokemonSecondType = if (pokemonDetail.types.size > 1) {
@@ -409,6 +681,7 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             } else {
                 null
             }
+
 
             if (pokemonDescription != null) {
                 val entries = pokemonDescription.entries
@@ -421,6 +694,17 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                     flavorTextFiltered ?: "No se ha encontrado una descripción de este Pokemon"
             }
 
+
+            tvPokemonStat1.text = pokemonStats[0].statNumber.toString()
+            tvPokemonStat2.text = pokemonStats[1].statNumber.toString()
+            tvPokemonStat3.text = pokemonStats[2].statNumber.toString()
+            tvPokemonStat4.text = pokemonStats[3].statNumber.toString()
+            tvPokemonStat5.text = pokemonStats[4].statNumber.toString()
+            tvPokemonStat6.text = pokemonStats[5].statNumber.toString()
+
+
+            val stats = pokemonDetail.stats
+            prepareStats(stats)
             tvPokemonNameDetail.text = pokemonName
             tvPokemonIdDetail.text = pokemonId.toString()
             tvPokemonHeight.text = pokemonFixedHeight
@@ -440,20 +724,17 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             }
             pokemonTypeColor(pokemonDetail)
 
-            progressBarDetails.isVisible = false
-            pokemonInfo.isVisible = true
-            cvPokemonDescription.isVisible = true
-            cvPokemonDetail.isVisible = true
-            ivPokemonDetail.isVisible = true
-            cvPokemonNameDetail.isVisible = true
-            llHeightWeight.isVisible = true
-            cvPokemonFirstType.isVisible = true
+
+            val sharedPreferences = getSharedPreferences("PokedexPrefs", MODE_PRIVATE)
+            val isFirstPokemon = sharedPreferences.getBoolean("isFirstPokemon", true)
+
 
             if (pokemonSound != null) {
                 delay(200)
                 playPokemonSound(pokemonSound)
                 cvPokemonDetail.setOnClickListener {
                     playPokemonSound(pokemonSound)
+                    imageAnimation(binding.ivPokemonDetail)
 
                 }
             } else {
@@ -464,8 +745,26 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                 gestureDetector.onTouchEvent(event)
             }
 
-        }
+            progressBarDetails.isVisible = false
+            pokemonInfo.isVisible = true
+            cvPokemonDescription.isVisible = true
+            cvPokemonDetail.isVisible = true
+            ivPokemonDetail.isVisible = true
+            cvPokemonNameDetail.isVisible = true
+            llHeightWeight.isVisible = true
+            cvPokemonFirstType.isVisible = true
+            cvPokemonStats.isVisible = true
+            svPokemonStats.isVisible = true
+            cvPokemonStatsInterior.isVisible = true
 
+            if (isFirstPokemon) {
+                showTutorialPrompts()
+            } else {
+                Log.d("Tutorial", "No se muestra tutorial")
+            }
+
+
+        }
 
     }
 
@@ -589,132 +888,187 @@ class PokemonDetailsActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     }
 
     private fun pokemonTypeColor(pokemonDetail: PokemonUrl) {
-        CoroutineScope(Dispatchers.Main).launch {
+        val firstType = pokemonDetail.types.firstOrNull()?.type?.typeName ?: ""
+        val secondType = pokemonDetail.types.getOrNull(1)?.type?.typeName ?: ""
 
-            val firstType = pokemonDetail.types.firstOrNull()?.type?.typeName ?: ""
-            val secondType = pokemonDetail.types.getOrNull(1)?.type?.typeName ?: ""
+        fun getColorForType(type: String): Int {
+            return when (type) {
+                "steel" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.steel_type
+                )
 
-            fun getColorForType(type: String): Int {
-                return when (type) {
-                    "steel" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.steel_type
-                    )
+                "water" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.water_type
+                )
 
-                    "water" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.water_type
-                    )
+                "bug" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.bug_type
+                )
 
-                    "bug" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.bug_type
-                    )
+                "dragon" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.dragon_type
+                )
 
-                    "dragon" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.dragon_type
-                    )
+                "electric" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.electric_type
+                )
 
-                    "electric" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.electric_type
-                    )
+                "ghost" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.ghost_type
+                )
 
-                    "ghost" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.ghost_type
-                    )
+                "fire" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.fire_type
+                )
 
-                    "fire" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.fire_type
-                    )
+                "fairy" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.fairy_type
+                )
 
-                    "fairy" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.fairy_type
-                    )
+                "ice" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.ice_type
+                )
 
-                    "ice" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.ice_type
-                    )
+                "fighting" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.fighting_type
+                )
 
-                    "fighting" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.fighting_type
-                    )
+                "normal" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.normal_type
+                )
 
-                    "normal" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.normal_type
-                    )
+                "grass" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.grass_type
+                )
 
-                    "grass" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.grass_type
-                    )
+                "psychic" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.psychic_type
+                )
 
-                    "psychic" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.psychic_type
-                    )
+                "rock" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.rock_type
+                )
 
-                    "rock" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.rock_type
-                    )
+                "dark" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.dark_type
+                )
 
-                    "dark" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.dark_type
-                    )
+                "ground" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.ground_type
+                )
 
-                    "ground" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.ground_type
-                    )
+                "poison" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.poison_type
+                )
 
-                    "poison" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.poison_type
-                    )
+                "flying" -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.flying_type
+                )
 
-                    "flying" -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.flying_type
-                    )
-
-                    else -> ContextCompat.getColor(
-                        binding.cvPokemonDetail.context,
-                        R.color.default_type
-                    )
-                }
+                else -> ContextCompat.getColor(
+                    binding.cvPokemonDetail.context,
+                    R.color.default_type
+                )
             }
-
-            val firstColor = getColorForType(firstType)
-            val secondColor = getColorForType(secondType)
-
-
-            val finalColor = firstColor
-
-
-            binding.cvPokemonDetail.setCardBackgroundColor(finalColor)
-            binding.cvPokemonNameDetail.setCardBackgroundColor(finalColor)
-            binding.pokemonInfo.setBackgroundColor(finalColor)
-            binding.cvPokemonDescription.setCardBackgroundColor(finalColor)
-            binding.cvPokemonDescriptionInterior.setCardBackgroundColor(finalColor)
-            binding.main.setBackgroundColor(finalColor)
-            binding.cvPokemonHeight.setCardBackgroundColor(finalColor)
-            binding.cvPokemonHeightInterior.setCardBackgroundColor(finalColor)
-            binding.cvPokemonWeight.setCardBackgroundColor(finalColor)
-            binding.cvPokemonWeightInterior.setCardBackgroundColor(finalColor)
-            binding.cvPokemonFirstType.setBackgroundColor(firstColor)
-            binding.cvPokemonSecondType.setBackgroundColor(secondColor)
-
-
         }
+
+        val firstColor = getColorForType(firstType)
+        val secondColor = getColorForType(secondType)
+
+
+        binding.cvPokemonDetail.setCardBackgroundColor(firstColor)
+        binding.cvPokemonNameDetail.setCardBackgroundColor(firstColor)
+        binding.pokemonInfo.setBackgroundColor(firstColor)
+        binding.cvPokemonDescription.setCardBackgroundColor(firstColor)
+        binding.cvPokemonDescriptionInterior.setCardBackgroundColor(firstColor)
+        binding.main.setBackgroundColor(firstColor)
+        binding.cvPokemonHeight.setCardBackgroundColor(firstColor)
+        binding.cvPokemonHeightInterior.setCardBackgroundColor(firstColor)
+        binding.cvPokemonWeight.setCardBackgroundColor(firstColor)
+        binding.cvPokemonWeightInterior.setCardBackgroundColor(firstColor)
+        binding.cvPokemonFirstType.setBackgroundColor(firstColor)
+        binding.cvPokemonSecondType.setBackgroundColor(secondColor)
+        binding.cvPokemonStats.setBackgroundColor(firstColor)
+        binding.cvPokemonStatsInterior.setBackgroundColor(firstColor)
+        binding.cardView1.setCardBackgroundColor(firstColor)
+        binding.cardView2.setCardBackgroundColor(firstColor)
+        binding.cardView3.setCardBackgroundColor(firstColor)
+        binding.cardView4.setCardBackgroundColor(firstColor)
+        binding.cardView5.setCardBackgroundColor(firstColor)
+        binding.cardView6.setCardBackgroundColor(firstColor)
+        binding.cvPokemonEvolutions.setCardBackgroundColor(firstColor)
+
+
+    }
+
+    private fun prepareStats(stats: List<StatInfo>) {
+        if (stats.size >= 6) { // Asegúrate de tener suficientes stats
+            updateWidth(binding.view1, stats[0].statNumber.toString())
+            updateWidth(binding.view2, stats[1].statNumber.toString())
+            updateWidth(binding.view3, stats[2].statNumber.toString())
+            updateWidth(binding.view4, stats[3].statNumber.toString())
+            updateWidth(binding.view5, stats[4].statNumber.toString())
+            updateWidth(binding.view6, stats[5].statNumber.toString())
+        } else {
+            Log.e("DetailSuperHeroActivity", "Número insuficiente de stats")
+        }
+    }
+
+    private fun updateWidth(view: View, stat: String) {
+        val widthInPx = try {
+            if (stat.isEmpty() || stat.equals("null", ignoreCase = true)) {
+                0f
+            } else {
+                stat.toFloat()
+            }
+        } catch (e: NumberFormatException) {
+            Log.e("DetailSuperHeroActivity", "Error al convertir altura: ${e.message}")
+            0f
+        }
+
+        val maxStat = 255
+        val maxWidthPx = 150 // Ajustar este valor al ancho máximo deseado
+        val scaleFactor = maxWidthPx / maxStat.toFloat()
+
+        // Multiplicar el stat por el factor de escala para obtener el ancho correcto
+        val adjustedWidthPx = widthInPx * scaleFactor
+
+        // Convertir el valor a dp y aplicar al layout
+        val params = view.layoutParams
+        params.width = pxToDp(adjustedWidthPx)
+        view.layoutParams = params
+    }
+
+
+    private fun pxToDp(px: Float): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, resources.displayMetrics)
+            .roundToInt()
+    }
+
+    private fun navigateToDetail(id: String) {
+        val intent = Intent(this, PokemonDetailsActivity::class.java)
+        val bundle = Bundle()
+        bundle.putString(PokemonDetailsActivity.EXTRA_ID, id)
+        intent.putExtras(bundle)
+        startActivity(intent)
     }
 
 

@@ -19,53 +19,61 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/svPokemonSearch"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/llPokemonSearch"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@color/sv_background"
-        android:visibility="gone"
-        app:iconifiedByDefault="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnOrder"
-        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnOrder"
-        android:layout_width="50dp"
-        android:layout_height="55dp"
-        android:layout_marginEnd="8dp"
-        android:padding="10dp"
-        app:backgroundTint="@color/white"
-        app:cornerRadius="0dp"
-        app:icon="@drawable/icon_filter"
-        app:iconGravity="textTop"
-        app:iconSize="30dp"
-        app:iconTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="@id/svPokemonSearch"
-        app:layout_constraintEnd_toEndOf="@id/svPokemonSearch"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@id/svPokemonSearch"
-        app:layout_constraintTop_toTopOf="@id/svPokemonSearch"
-        app:strokeColor="@color/black"
-        app:strokeWidth="1dp" />
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/svPokemonSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_view_border"
+            android:maxWidth="300dp"
+            android:padding="6dp"
+            android:visibility="gone"
+            app:backgroundTint="@color/black"
+            app:iconifiedByDefault="false"
+            tools:visibility="visible">
+        </androidx.appcompat.widget.SearchView>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOrder"
+            android:layout_width="50dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="10dp"
+            android:padding="10dp"
+            app:backgroundTint="@color/sv_background"
+            app:cornerRadius="4dp"
+            app:icon="@drawable/icon_filter"
+            app:iconGravity="textTop"
+            app:iconSize="30dp"
+            app:iconTint="@color/black"
+            app:strokeColor="@color/black"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPokemonList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/svPokemonSearch"
+        app:layout_constraintTop_toBottomOf="@id/llPokemonSearch"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

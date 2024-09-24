@@ -21,15 +21,40 @@ data class PokemonUrl(
     val pastTypes: List<Any>, // Ajusta según el tipo real de `past_types`
     val species: PokemonSpecies, // Ajusta según el tipo real de `species`
     val sprites: Others,
-    val stats: List<Any>,
+    val stats: List<StatInfo>,
     val types: List<Types>,
     val weight: Int)
 
 data class PokemonSpecies(
     val name: String,
+    val url: String,
+    val evolution_chain: EvolutionChainLink // Cambiado para incluir la cadena de evolución
+)
+
+data class EvolutionChainLink(
     val url: String
 )
 
+data class EvolutionChainResponse(
+    val baby_trigger_item: Any?,
+    val chain: EvolutionChain,
+    val id: Int
+)
+
+data class EvolutionChain(
+    val evolves_to: List<EvolutionChain>,
+    val is_baby: Boolean,
+    val species: PokemonSpecies
+)
+
+data class StatInfo(
+    @Expose @SerializedName("base_stat") val statNumber: Int,
+    @Expose @SerializedName("stat") val stat: StatName
+)
+
+data class StatName(
+    @Expose @SerializedName("name") val statName: String
+)
 
 data class DescriptionUrl(
     @Expose @SerializedName("flavor_text_entries") val entries: List<FlavorTextEntry>

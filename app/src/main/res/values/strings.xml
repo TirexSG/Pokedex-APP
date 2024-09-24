@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PokedexAPP</string>
+    <string name="app_name">Pokedex APP</string>
     <string name="height">Altura</string>
     <string name="weight">Peso</string>
     <string name="ordenar">Ordenar por tipo</string>
@@ -23,5 +23,20 @@
     <string name="poison_type">Veneno</string>
     <string name="flying_type">Volador</string>
     <string name="default_type">Default</string>
+    <string name="menu_text">¡Pulsa para empezar!</string>
+    <string name="search_pokemon">Pulsa para buscar un Pokemon</string>
+    <string name="dialog_advice">Deslice hacia la derecha en la parte superior de la pantalla para volver atras.</string>
+    <string name="dialog_second_advice">Deslice hacia abajo en la parte inferior de la pantalla para ver más información de este Pokemon. </string>
+    <string name="consejo">Consejo</string>
+    <string name="dialog_close">Toque la pantalla para cerrar</string>
+    <string name="estadisticas_base">Estadísticas Base</string>
+    <string name="todos">Todos</string>
+
+    <string name="stat_1">PS</string>
+    <string name="stat_2">Ataque</string>
+    <string name="stat_3">Defensa</string>
+    <string name="stat_4">Velocidad</string>
+    <string name="stat_5">At. Especial</string>
+    <string name="stat_6">Def. Especial</string>
 
 </resources>

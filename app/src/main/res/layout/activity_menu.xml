@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    tools:context=".MenuActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleX="1.4"
+        android:background="@drawable/pokemon_background"/>
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/pokeballAnimation"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginBottom="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="150dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/pokeball_animation" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvPokemonButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="80dp"
+            app:cardBackgroundColor="@color/sv_background"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pokeballAnimation"
+            app:strokeColor="@color/white"
+            app:strokeWidth="3dp">
+
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:background="@color/low_transparent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:text="@string/menu_text"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold|italic" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

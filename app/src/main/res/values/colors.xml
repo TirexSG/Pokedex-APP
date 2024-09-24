@@ -2,6 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#C3C3C3</color>
+
+    <color name="transparent">#00FFFFFF</color>
 
     <color name="item_pokemon_text_name">#66FFFFFF</color>
     <color name="item_pokemon_background">#FF8282</color>
@@ -13,6 +16,7 @@
     <color name="sv_background">#339FA09F</color>
     <color name="cv_view_background">#D9FFFFFF</color>
     <color name="selectedTypeBackground">#D9FF981A</color>
+    <color name="transparent_80">#CCFFFFFF</color>
 
 
 

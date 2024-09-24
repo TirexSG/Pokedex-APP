@@ -2,20 +2,32 @@ package com.tirex.pokedexapp
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: PokemonAdapter
     private lateinit var recyclerView: RecyclerView
     private var pokemonList: MutableList<PokemonResponseInfo> = mutableListOf()
-    private val originalColors = mutableMapOf<View, Int>()
 
     private val typeColors = mapOf(
         "steel" to R.color.steel_type,
@@ -83,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        initializeSharedPreferences()
+
         binding.btnOrder.setOnClickListener { showTypeSelectionDialog() }
         recyclerView = binding.rvPokemonList
         retrofit = getRetrofit()
@@ -92,23 +103,68 @@ class MainActivity : AppCompatActivity() {
             fetchPokemons()
         }
 
-
-    }
-
-
-
-    private fun initializeSharedPreferences() {
-        val sharedPreferences = getSharedPreferences("PokedexPrefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        if (sharedPreferences.getBoolean("isFirstLaunch", true)) {
-            editor.putBoolean("isFirstPokemon", true)
-            editor.putBoolean("isFirstLaunch", false)
-            editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.let { controller ->
+                controller.hide(WindowInsets.Type.navigationBars())
+                controller.systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_IMMERSIVE or
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         }
+
+
+        val searchEditText = binding.svPokemonSearch.findViewById<EditText>(
+            androidx.appcompat.R.id.search_src_text
+        )
+        val searchIcon = binding.svPokemonSearch.findViewById<ImageView>(
+            androidx.appcompat.R.id.search_mag_icon
+        )
+        val closeIcon = binding.svPokemonSearch.findViewById<ImageView>(
+            androidx.appcompat.R.id.search_close_btn
+        )
+
+        val progressBar = binding.progressBarList
+        progressBar.indeterminateTintList = ContextCompat.getColorStateList(this, R.color.black)
+
+        closeIcon.setColorFilter(
+            ContextCompat.getColor(this, R.color.black),
+            PorterDuff.Mode.SRC_IN
+        )
+        searchIcon.setColorFilter(
+            ContextCompat.getColor(this, R.color.black),
+            PorterDuff.Mode.SRC_IN
+        )
+
+
+        searchEditText.setHintTextColor(ContextCompat.getColor(this, R.color.black))
+        searchEditText.setTextColor(ContextCompat.getColor(this, R.color.black))
+
+// Aplicar el estilo del cursor en todas las versiones de Android sin reflexión
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Para Android 10 (API 29) y superiores, puedes usar setTextCursorDrawableResource
+            searchEditText.textCursorDrawable = ContextCompat.getDrawable(this, R.drawable.cursor_black)
+        } else {
+            // Para versiones anteriores, asegúrate de que el cursor se aplique a través de estilos en XML
+            searchEditText.setTextAppearance(R.style.CustomEditText)
+        }
+
+
+
     }
 
 
-    private fun initUI() {
+
+
+
+
+
+
+        private fun initUI() {
         binding.svPokemonSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -116,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Busqueda:", query)
                 if (query.isEmpty()) {
                     lifecycleScope.launch {
-                        fetchPokemons()
+
                     }
                 } else {
                     handleSearch(query)
@@ -178,6 +234,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         pokemonList.addAll(fetchedList)
                         adapter.updateClearList(pokemonList)
+                        binding.rvPokemonList.scrollToPosition(0)
 
                         delay(1000)
                         binding.progressBarList.isVisible = false
@@ -203,9 +260,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
-
 
 
 
@@ -300,17 +354,14 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToDetail(id: String) {
         val intent = Intent(this, PokemonDetailsActivity::class.java)
         val bundle = Bundle()
+
         bundle.putString(PokemonDetailsActivity.EXTRA_ID, id)
         intent.putExtras(bundle)
 
-        val sharedPreferences = getSharedPreferences("PokedexPrefs", MODE_PRIVATE)
-        val isFirstPokemon = sharedPreferences.getBoolean("isFirstPokemon", true)
-
-        // Solo mostrar el tutorial en el primer Pokémon
-        intent.putExtra("SHOW_TUTORIAL", isFirstPokemon)
         startActivity(intent)
-        Log.d("Tutorial", "Navigate to detail, isFirstPokemon: $isFirstPokemon")
     }
+
+
 
 
 
@@ -350,47 +401,51 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Selecciona al menos un tipo", Toast.LENGTH_SHORT).show()
                 }
                 1 -> {
-                    // Solo un tipo seleccionado
                     orderPokemons(selectedTypes[0], null)
                     dialog.dismiss()
                 }
                 2 -> {
-                    // Dos tipos seleccionados
                     orderPokemons(selectedTypes[0], selectedTypes[1])
                     dialog.dismiss()
                 }
                 else -> {
-                    // Más de dos tipos seleccionados
                     Toast.makeText(this, "Selecciona un máximo de dos tipos", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        // Configura los LinearLayouts en el diálogo
         for ((layout, type) in typeLayouts) {
-            // Solo almacenar si no se ha hecho antes
-            if (!originalColors.containsKey(layout)) {
-                originalColors[layout] = (layout.background as ColorDrawable).color
-            }
+            // Establece el background con el drawable que tiene los bordes
+            layout.setBackgroundResource(R.drawable.linear_layout_border)
 
             layout.setOnClickListener {
                 if (selectedTypes.contains(type)) {
                     // Desmarcar el tipo si ya está seleccionado
                     selectedTypes.remove(type)
-                    layout.setBackgroundColor(getColor(typeColors[type] ?: R.color.default_type))  // Marca como desmarcado
+                    layout.setBackgroundResource(R.drawable.linear_layout_border) // Vuelve al borde
                 } else {
                     // Si ya hay 2 tipos seleccionados, no permitir seleccionar un nuevo tipo
                     if (selectedTypes.size < 2) {
                         selectedTypes.add(type)
-                        layout.setBackgroundColor(getColor(R.color.white))  // Marca como seleccionado
+
+                        // Crear un nuevo GradientDrawable con el color del tipo
+                        val drawable = GradientDrawable().apply {
+                            shape = GradientDrawable.RECTANGLE
+                            setColor(getColor(typeColors[type] ?: R.color.default_type)) // Color del tipo
+                            setStroke(5, Color.BLACK) // Mantener el borde negro
+                            cornerRadius = 5f // Radio de las esquinas
+                        }
+                        layout.background = drawable
                     } else {
-                        // Mostrar un mensaje o notificar al usuario que solo se permiten 2 tipos
                         Toast.makeText(this, "Solo puedes seleccionar 2 tipos", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
     }
+
+
+
 
     private fun orderPokemons(desiredType1: String, desiredType2: String?) {
         // Muestra el progress bar y oculta el RecyclerView antes de iniciar la tarea
@@ -432,6 +487,8 @@ class MainActivity : AppCompatActivity() {
                         // Limpia el adaptador antes de actualizar la lista
                         adapter.updateClearList(limitedPokemonResponseInfos)
 
+                        binding.rvPokemonList.scrollToPosition(0)
+
                         // Oculta el progress bar y muestra el RecyclerView después de actualizar la lista
                         delay(1000)  // Mantener el retraso para mostrar el progress bar por un tiempo
                         binding.progressBarList.isVisible = false
@@ -460,16 +517,6 @@ class MainActivity : AppCompatActivity() {
     // Función auxiliar para extraer el ID de la URL
     private fun extractIdFromUrl(url: String): Int {
         return url.trimEnd('/').substringAfterLast('/').toIntOrNull() ?: 0
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        val sharedPreferences = getSharedPreferences("PokedexPrefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("isFirstPokemon", true)
-        editor.apply()
     }
 
 

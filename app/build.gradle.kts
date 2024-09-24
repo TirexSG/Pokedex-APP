@@ -42,7 +42,8 @@ android {
 
 dependencies {
 
-    implementation ("uk.co.samuelwall:material-tap-target-prompt:3.0.0")
+    implementation (libs.androidx.core)
+    implementation (libs.material.tap.target.prompt)
     implementation (libs.lottie)
     implementation (libs.picasso)
     implementation (libs.retrofit)

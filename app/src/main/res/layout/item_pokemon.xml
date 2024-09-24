@@ -56,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_weight="1"
-        android:padding="4dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="2dp"
         app:cardElevation="8dp"
@@ -69,24 +68,25 @@
 
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="175dp"
             android:background="@color/transparent_white" />
 
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:padding="4dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/transparent_pokeball" />
 
         <ImageView
             android:id="@+id/ivPokemonImage"
-            android:layout_width="175dp"
+            android:layout_width="wrap_content"
             android:layout_height="175dp"
-            android:layout_marginBottom="2dp"
-            android:scaleType="centerCrop" />
+            android:paddingBottom="2dp"
+            android:layout_gravity="center"
+            android:scaleType="center" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cvPokemonName"
@@ -96,7 +96,7 @@
             android:layout_marginBottom="10dp"
             android:backgroundTint="@color/item_pokemon_text_name"
             android:elevation="4dp"
-            app:cardCornerRadius="32dp"
+            app:cardCornerRadius="4dp"
             app:strokeColor="@color/black"
             app:strokeWidth="1dp">
 
@@ -106,10 +106,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:padding="8dp"
+                android:maxLines="1"
+                android:padding="6dp"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Pokemon" />
 

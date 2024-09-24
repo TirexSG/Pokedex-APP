@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    >
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cvPokemonItemType"
@@ -23,7 +23,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/cv_view_background" />
+            android:background="@color/grey" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/ordenar"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ScrollView
@@ -57,14 +57,13 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/steel_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/steel_type"
                         android:textColor="@color/black"
@@ -77,13 +76,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/water_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/water_type"
                         android:textColor="@color/black"
@@ -96,13 +94,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/bug_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/bug_type"
                         android:textColor="@color/black"
@@ -115,13 +112,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/dragon_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/dragon_type"
                         android:textColor="@color/black"
@@ -134,13 +130,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/electric_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/electric_type"
                         android:textColor="@color/black"
@@ -153,13 +148,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/ghost_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/ghost_type"
                         android:textColor="@color/black"
@@ -172,13 +166,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/fire_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/fire_type"
                         android:textColor="@color/black"
@@ -191,13 +184,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/fairy_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/fairy_type"
                         android:textColor="@color/black"
@@ -210,13 +202,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/ice_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/ice_type"
                         android:textColor="@color/black"
@@ -229,13 +220,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/fighting_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/fighting_type"
                         android:textColor="@color/black"
@@ -248,13 +238,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/normal_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/normal_type"
                         android:textColor="@color/black"
@@ -267,13 +256,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/grass_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/grass_type"
                         android:textColor="@color/black"
@@ -286,13 +274,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/psychic_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/psychic_type"
                         android:textColor="@color/black"
@@ -305,13 +292,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/rock_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/rock_type"
                         android:textColor="@color/black"
@@ -324,13 +310,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/dark_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/dark_type"
                         android:textColor="@color/black"
@@ -343,13 +328,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/ground_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/ground_type"
                         android:textColor="@color/black"
@@ -362,13 +346,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/poison_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/poison_type"
                         android:textColor="@color/black"
@@ -381,13 +364,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginVertical="4dp"
-                    android:background="@color/flying_type"
+                    android:background="@drawable/linear_layout_border"
                     android:padding="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/transparent_white"
                         android:gravity="center"
                         android:text="@string/flying_type"
                         android:textColor="@color/black"
@@ -404,13 +386,14 @@
             android:id="@+id/btnOrderDialog"
             android:layout_width="120dp"
             android:layout_height="50dp"
-            app:cornerRadius="16dp"
+            app:cornerRadius="4dp"
             app:strokeColor="@color/black"
             android:text="@string/order"
+            android:textSize="18dp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:gravity="center"
-            app:strokeWidth="3dp"
+            app:strokeWidth="2dp"
             android:layout_gravity="bottom|center"
             android:layout_margin="10dp"
             android:backgroundTint="@color/white" />
