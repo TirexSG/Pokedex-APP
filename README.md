@@ -42,10 +42,10 @@ Este proyecto utiliza la [PokéAPI](https://pokeapi.co/) para obtener datos de l
 
 ## Capturas de pantalla
 
-![Pantalla de inicio](images/screenshot1.jpeg)
-![Ordenar Pokemons](images/screenshot2.jpeg)
-![Detalles del Pokemon](images/screenshot3.jpeg)
-![Evoluciones del Pokemon](images/screenshot4.jpeg)
+<img src="images/screenshot1.jpeg" alt="Pantalla de inicio" width="300"/>
+<img src="images/screenshot2.jpeg" alt="Ordenar Pokemons" width="300"/>
+<img src="images/screenshot3.jpeg" alt="Detalles del Pokemon" width="300"/>
+<img src="images/screenshot4.jpeg" alt="Evoluciones del Pokemon" width="300"/>
 
 ## Contribuciones
 
