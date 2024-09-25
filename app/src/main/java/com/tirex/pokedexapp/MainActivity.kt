@@ -4,8 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,43 +17,28 @@ import android.view.WindowInsetsController
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.tirex.pokedexapp.databinding.ActivityMainBinding
 import com.tirex.pokedexapp.databinding.ItemTypePokemonBinding
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import java.io.IOException
 import java.util.Locale
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -144,24 +130,20 @@ class MainActivity : AppCompatActivity() {
         searchEditText.setHintTextColor(ContextCompat.getColor(this, R.color.black))
         searchEditText.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-// Aplicar el estilo del cursor en todas las versiones de Android sin reflexión
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Para Android 10 (API 29) y superiores, puedes usar setTextCursorDrawableResource
             searchEditText.textCursorDrawable = ContextCompat.getDrawable(this, R.drawable.cursor_black)
         } else {
-            // Para versiones anteriores, asegúrate de que el cursor se aplique a través de estilos en XML
             searchEditText.setTextAppearance(R.style.CustomEditText)
         }
 
+        if (isInternetAvailable(this)) {
+            Log.d("Internet", "El usuario tiene internet")
+        } else {
+            showCustomToast()
+        }
 
 
     }
-
-
-
-
-
-
 
 
         private fun initUI() {
@@ -511,6 +493,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
+    }
+
+    private fun showCustomToast() {
+        val inflater = layoutInflater
+        // Inflar el layout del custom toast
+        val layout = inflater.inflate(R.layout.custom_toast, null)
+
+        // Crear y configurar el Toast
+        val toast = Toast(applicationContext)
+        toast.duration = Toast.LENGTH_LONG
+        toast.view = layout // Asignar la vista inflada al Toast
+        toast.show()
+    }
 
 
 

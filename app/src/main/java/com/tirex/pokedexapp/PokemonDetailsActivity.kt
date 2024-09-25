@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.media.AudioAttributes
@@ -21,8 +20,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -31,7 +28,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import com.tirex.pokedexapp.databinding.ActivityPokemonDetailsBinding

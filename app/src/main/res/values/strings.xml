@@ -31,6 +31,7 @@
     <string name="dialog_close">Toque la pantalla para cerrar</string>
     <string name="estadisticas_base">Estadísticas Base</string>
     <string name="todos">Todos</string>
+    <string name="toast_internet">Necesitas conexión a Internet para utilizar la aplicación.\n Pruebe más tarde.</string>
 
     <string name="stat_1">PS</string>
     <string name="stat_2">Ataque</string>
